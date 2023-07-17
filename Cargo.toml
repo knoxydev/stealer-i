@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 sysinfo = "0.29.4"
+screenshots = "0.6.0"
