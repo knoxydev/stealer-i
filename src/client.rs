@@ -9,7 +9,7 @@ pub mod client_md
 			{
 				println!("Successfully connected to server in port 3333");
 
-				let mut resp = String::from("Hello");
+				let mut resp = crate::sysinfo::sysinfo_md::start();
 				let msg: &[u8] = resp.as_bytes();
 				stream.write_all(msg).unwrap();
 
