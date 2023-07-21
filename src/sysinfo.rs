@@ -3,7 +3,7 @@ pub mod sysinfo_md
 	use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
 
 
-	pub fn start()
+	pub fn start() -> String
 	{
 		let mut sys = System::new_all();
 		sys.refresh_all();
@@ -15,6 +15,6 @@ pub mod sysinfo_md
 			sys.os_version().unwrap(),
 			sys.host_name().unwrap());
 
-		println!("{}", data);
+		return data;
 	}
 }
