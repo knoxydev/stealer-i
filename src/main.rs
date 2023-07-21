@@ -3,16 +3,23 @@
 
 // MODULES
 mod sysinfo;
-pub use crate::sysinfo::sysinfo_md;
 
 mod screen;
 pub use crate::screen::screen_md;
+
+mod bot;
+pub use crate::bot::bot_md;
+
+mod client;
+pub use crate::client::client_md;
+
+mod token;
 
 
 fn main()
 {
 	println!("Hello, world!");
 
-	sysinfo_md::start();
 	screen_md::start();
+	client_md::start();
 }
