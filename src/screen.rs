@@ -12,8 +12,7 @@ pub mod screen_md
 		{
 			let mut image = screen.capture().unwrap();
 			let mut buffer = image.to_png().unwrap();
-			fs::write("target/screen-1.png", buffer).unwrap();
-			//fs::write(format!("target/{}.png", screen.display_info.id), buffer).unwrap();
+			fs::write("screen-1.png", buffer).unwrap();
 		}
 	}
 }
