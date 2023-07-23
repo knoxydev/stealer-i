@@ -1,7 +1,5 @@
 pub mod client_md
 {
-	use std::io;
-	use std::io::prelude::*;
 	use std::fs::File;
 	use std::net::{TcpStream};
 	use std::io::{Read, Write};

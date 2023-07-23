@@ -1,6 +1,6 @@
 pub mod sysinfo_md
 {
-	use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
+	use sysinfo::{System, SystemExt};
 
 
 	pub fn start() -> String

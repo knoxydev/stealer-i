@@ -1,7 +1,7 @@
 pub mod screen_md
 {
 	use screenshots::Screen;
-	use std::{fs, time::Instant};
+	use std::fs;
 
 
 	pub fn start()
@@ -10,8 +10,8 @@ pub mod screen_md
 
 		for screen in screens
 		{
-			let mut image = screen.capture().unwrap();
-			let mut buffer = image.to_png().unwrap();
+			let image = screen.capture().unwrap();
+			let buffer = image.to_png().unwrap();
 			fs::write("screen-1.png", buffer).unwrap();
 		}
 	}
