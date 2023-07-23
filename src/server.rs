@@ -1,30 +1,34 @@
-#![allow(warnings)]
-
 pub mod server_mod
 {
 	use std::thread;
 	use std::net::{TcpListener, TcpStream, Shutdown};
 	use std::io::{Read, Write};
+	use std::fs::File;
+	use std::io::Result;
 
-	fn handle_client(mut stream: TcpStream)
+
+	fn handle_client(mut stream: TcpStream) -> Result<()>
 	{
-		let mut data = [0; 512];
-		match stream.read(&mut data) {
-			Ok(x) =>
+		let mut buffer = [0; 8];
+		match stream.read_exact(&mut buffer) {
+			Ok(()) =>
 			{
-				let rqt = String::from_utf8_lossy(&data[..x]);
-				println!("{}", &rqt);
+				let file_size = u64::from_ne_bytes(buffer);
+				let mut data = Vec::new();
+				data.resize(file_size as usize, 0);
 
-				stream.write("ok".as_bytes()).expect("Failed to write response");
-			},
-			Err(_) =>
-			{
-				println!("An error occurred, terminating connection with {}", stream.peer_addr().unwrap());
-				stream.shutdown(Shutdown::Both).unwrap();
-				
-				return;
+				match stream.read_exact(&mut data) {
+					Ok(()) => {
+						File::create("target/data.zip")?.write_all(&data)?;
+						stream.write("ok".as_bytes()).expect("Failed to write response");
+					},
+					Err(_) => println!("Error while reading zip file data"),
+				}
 			}
+			Err(_) => println!("Error while reading zip file size"),
 		}
+
+		Ok(())
 	}
 
 	pub fn server_fn()
@@ -44,6 +48,6 @@ pub mod server_mod
 			}
 		}
 
-		drop(listener); // connection closed
+		drop(listener);
 	}
 }
