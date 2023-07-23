@@ -64,7 +64,7 @@ pub mod zip_md
 
 
 		zip.finish()?;
-		println!("Zip folder created successfully.");
+		println!("zip folder created successfully.");
 		Ok(())
 	}
 }

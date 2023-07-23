@@ -17,6 +17,14 @@ fn main()
 {
 	println!("Hello, world!");
 
-	zip_md::start();
-	client_md::start();
+	match zip_md::start() {
+		Ok(_) => match client_md::start() {
+				Ok(_) => match std::fs::remove_file("data.zip") {
+					Ok(_) => println!("excellent !"),
+					Err(_) => return,
+				},
+				Err(_) => return,
+			},
+		Err(_) => return,
+	}
 }

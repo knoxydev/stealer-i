@@ -11,7 +11,7 @@ pub mod client_md
 		match TcpStream::connect("localhost:3333") {
 			Ok(mut stream) =>
 			{
-				println!("Successfully connected to server in port 3333");
+				println!("successfully connected to server in port 3333");
 
 
 				let mut f = File::open("data.zip")?;
@@ -31,7 +31,7 @@ pub mod client_md
 			},
 			Err(e) => println!("Failed to connect: {}", e),
 		}
-		println!("Terminated.");
+		println!("terminated.");
 
 		Ok(())
 	}
