@@ -15,9 +15,7 @@ fn main()
 {
 	println!("Hello, world!");
 
-
 	client_md::start(String::from("/sysinfo"));
 	client_md::start(String::from("/screen"));
 	client_md::start(String::from("/session"));
-	//client_md::start(String::from("/last"));
 }

@@ -51,11 +51,6 @@ pub mod client_md
 						}
 					}
 				}
-				else if request_path == "/last".to_string()
-				{
-					let text = String::from("end");
-					stream.write_all(text.as_bytes()).unwrap();
-				}
 			},
 			Err(e) => println!("Failed to connect: {}", e),
 		}

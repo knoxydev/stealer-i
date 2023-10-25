@@ -231,18 +231,6 @@ pub mod server_md
 				crate::server::log_md::start("#session".to_string());
 				crate::server::zip_md::start();
 			},
-			Some(line) if line.starts_with("GET /last") => {
-				match stream.read(&mut buffer) {
-					Ok(x) =>
-					{
-						let resp = String::from_utf8_lossy(&buffer[..x]);
-						println!("{:?}", resp);
-					},
-					Err(_) => println!("An error occurred, terminating connection with {}", stream.peer_addr().unwrap()),
-				}
-
-				println!("HTTP/1.1 200 OK");
-			},
 			_ => println!("HTTP/1.1 404 NOT FOUND"),
 		};		
 
