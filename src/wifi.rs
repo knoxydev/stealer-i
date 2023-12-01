@@ -2,19 +2,15 @@ pub mod wifi_md
 {
 	use std::process::Command;
 	use std::borrow::Cow;
-	use std::fs::File;
-	use std::io::prelude::*;
 
 
 	// SO THAT GET PASSWORDS
 	fn get_keys(profiles: Vec<String>) -> Vec<String>
 	{
-		let mut output_keys = String::new();
 		let mut wifi_list: Vec<String> = Vec::new();
 
-		for (i, x) in profiles.into_iter().enumerate()
+		for (_, x) in profiles.into_iter().enumerate()
 		{
-			let mut names: Vec<String> = Vec::new();
 			let old_output = Command::new("netsh")
 				.arg("wlan")
 				.arg("show")
@@ -29,9 +25,6 @@ pub mod wifi_md
 			let output: String = match new_output
 			{ Cow::Borrowed(x) => x.to_string(),
 				Cow::Owned(x) => x.to_string(), };
-
-			//output_keys.push_str(&output);
-			//output_keys.push_str("\n_-_-_-_-_-_\n");
 
 			wifi_list.push(output);
 		}

