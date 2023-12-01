@@ -31,6 +31,8 @@ pub mod client_md
 					let buffer: Vec<u8> = crate::screen::screen_md::start().unwrap();
 					stream.write_all(&buffer).unwrap();
 				}
+				else if request_path == "/wifi".to_string()
+					{ stream.write_all(crate::wifi::wifi_md::start().as_bytes()).unwrap(); }
 				else if request_path == "/session".to_string()
 				{
 					let files: Vec<String> = crate::session::telegram_md::start();

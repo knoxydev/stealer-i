@@ -2,6 +2,8 @@ pub mod wifi_md
 {
 	use std::process::Command;
 	use std::borrow::Cow;
+	use std::fs::File;
+	use std::io::prelude::*;
 
 
 	// SO THAT GET PASSWORDS
@@ -88,12 +90,11 @@ pub mod wifi_md
 	}
 
 
-	pub fn start() -> Vec<String>
+	pub fn start() -> String
 	{
-		let profiles: Vec<String> = get_profiles();
-		println!("{:?}", profiles);
-
-		let data: Vec<String> = get_keys(profiles);
-		return data;
+		// GET_PROFILES() - RETURN VECTOR WITH NETWORKS' NAME
+		// GET_KEYS() - RETURN VECTOR WITH WHOLE INFO ABOUT NETWORK (INCLUDING PASSWORD)
+		// .JOIN() - SO THAT CREATE A STRING FROM VECTOR'S ELEMENT AND ADD SEPARATORS BETWEEN ELEMENTS
+		return get_keys(get_profiles()).join("\n\n\n-~-~-~-~-~-~-~-~-~-\n\n\n");
 	}
 }
